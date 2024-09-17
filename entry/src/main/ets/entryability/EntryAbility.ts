@@ -21,7 +21,9 @@ export default class EntryAbility extends UIAbility {
         sub_windowClass = data;
         console.info('Succeeded in creating the subwindow. Data: ' + JSON.stringify(data));
         // 2.子窗口创建成功后，设置子窗口的位置、大小及相关属性等。
-        sub_windowClass.moveWindowTo(600, 300, (err) => {
+
+        //窗口位置
+        sub_windowClass.moveWindowTo(900, 300, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to move the window. Cause:' + JSON.stringify(err));
@@ -29,7 +31,8 @@ export default class EntryAbility extends UIAbility {
           }
           console.info('Succeeded in moving the window.');
         });
-        sub_windowClass.resize(500, 500, (err) => {
+        //定义窗口大小
+        sub_windowClass.resize(300, 300, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to change the window size. Cause:' + JSON.stringify(err));

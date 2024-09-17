@@ -9,9 +9,14 @@ struct MyWindows {
         Text(this.message)
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
-      }.backgroundColor(Color.Red)
+      }
+      .backgroundColor(Color.Red)
       .width('100%')
+      .onClick(() => {
+        console.info('test1111', '点了')
+      })
     }
+
     .height('100%')
   }
 }
