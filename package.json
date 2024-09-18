@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@atomicservice/asweb-sdk": "^1.0.0"
+  }
+}
