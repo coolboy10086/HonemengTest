@@ -23,7 +23,7 @@ export default class EntryAbility extends UIAbility {
         // 2.子窗口创建成功后，设置子窗口的位置、大小及相关属性等。
 
         //窗口位置
-        sub_windowClass.moveWindowTo(500, 300, (err) => {
+        sub_windowClass.moveWindowTo(500, 800, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to move the window. Cause:' + JSON.stringify(err));
@@ -32,7 +32,7 @@ export default class EntryAbility extends UIAbility {
           console.info('Succeeded in moving the window.');
         });
         //定义窗口大小
-        sub_windowClass.resize(300, 300, (err) => {
+        sub_windowClass.resize(800, 800, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
