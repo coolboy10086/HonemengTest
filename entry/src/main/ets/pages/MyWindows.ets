@@ -2,9 +2,9 @@
 @Component
 struct MyWindows {
   @State message: string = 'Hello World'
-
+  // pageStack: NavPathStack = new NavPathStack()
   build() {
-    Row() {
+    NavDestination() {
       Column() {
         Text(this.message)
           .fontSize(50)
@@ -16,7 +16,5 @@ struct MyWindows {
         console.info('test1111', '点了')
       })
     }
-
-    .height('100%')
   }
 }
