@@ -3,15 +3,10 @@ import UIAbility from '@ohos.app.ability.UIAbility';
 import window from '@ohos.window';
 import router from '@ohos.router';
 
-let windowStage: window.WindowStage | null = null;
-let sub_windowClass: window.Window | null = null;
-
 @Entry
 @Component
 @Preview
 struct phone {
-
-
   phone() {
     let okphone = call.hasVoiceCapability()
     if (okphone) {
