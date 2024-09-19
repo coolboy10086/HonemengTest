@@ -1,6 +1,7 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
+import router from '@ohos.router';
 
 let windowStage_: window.WindowStage | null = null;
 let sub_windowClass: window.Window | null = null;
@@ -21,7 +22,6 @@ export default class EntryAbility extends UIAbility {
         sub_windowClass = data;
         console.info('Succeeded in creating the subwindow. Data: ' + JSON.stringify(data));
         // 2.子窗口创建成功后，设置子窗口的位置、大小及相关属性等。
-
         //窗口位置
         sub_windowClass.moveWindowTo(0, 800, (err) => {
           let errCode: number = err.code;
@@ -41,6 +41,7 @@ export default class EntryAbility extends UIAbility {
           console.info('Succeeded in changing the window size.');
         });
         // 3.为子窗口加载对应的目标页面。
+
         sub_windowClass.setUIContent("pages/MyWindows", (err) => {
           let errCode: number = err.code;
           if (errCode) {
@@ -88,7 +89,7 @@ export default class EntryAbility extends UIAbility {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
     windowStage_ = windowStage
     this.showSubWindow()
-    windowStage.loadContent('pages/phone', (err, data) => {
+    windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;

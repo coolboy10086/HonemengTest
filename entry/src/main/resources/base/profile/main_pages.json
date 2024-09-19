@@ -2,6 +2,7 @@
   "src": [
     "pages/Index",
     "pages/phone",
-    "pages/MyWindows"
+    "pages/MyWindows",
+    "pages/Test"
   ]
 }

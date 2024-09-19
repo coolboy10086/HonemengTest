@@ -35,10 +35,13 @@ struct MyWindows {
         } catch (e) {
           console.error(`message:${e.message},errcode:${e.code}`)
         }
+        router.pushUrl({ url: 'pages/Test' })
         // openWebUrl('https://www.example.com');
       })
 
-      Web({ src: 'www.bing.com', controller: this.controller })
+      Web({ src: 'www.bing.com', controller: this.controller }).onClick(() => {
+
+      })
     }
   }
 }
