@@ -2,7 +2,6 @@ import http from '@ohos.net.http'
 import Url from '@ohos.url'
 import router from '@ohos.router'
 import EntryAbility from '../entryability/EntryAbility'
-import window from '@ohos.window'
 
 let httpRequest = http.createHttp()
 
@@ -33,15 +32,6 @@ class Library {
   location: string
   telephoneNumber: string
   description: string
-  books: Book[]
-
-  // constructor(name: string, location: string, telephoneNumber: string, description: string, books: Book[]) {
-  //   this.name = name
-  //   this.location = location
-  //   this.telephoneNumber = telephoneNumber
-  //   this.description = description
-  //   this.books = books
-  // }
 }
 
 
@@ -63,9 +53,11 @@ struct Index {
 
   }
 
-  @State res: string = ''
-  private testUrl = 'http://03bb4619e4c041a1b67d306114fe8106.apig.cn-south-1.huaweicloudapis.com/vnihugw'
-  @State url: string = ''
+  @State libname: string = ''
+  @State liblocation: string = ''
+  @State libtelephoneNumber: string = ''
+  @State libdescription: string = ''
+  private testUrl = 'https://1ffc8088cc224333a4ea2cf62fb31bcd.apig.cn-east-3.huaweicloudapis.com/API_test1'
   // 初始化 Library 对象
   private lib: Library = null
 
@@ -85,20 +77,26 @@ struct Index {
               router.pushUrl({ url: 'pages/phone' })
             })
         }
-        Text(this.res)
+
+        Text(this.libname)
           .fontSize(25)
           .fontWeight(FontWeight.Bold)
-        Text(this.url)
-        Image(this.url)
-          .width('100%')
-          .height(200)
+        Text(this.liblocation)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+        Text(this.libtelephoneNumber)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+        Text(this.libdescription)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
         Button('测试')
           .position({ x: 0, y: 300 })
           .zIndex(999)
           .width(100)
           .height(100)
-          .onClick(()=>{
-            router.pushUrl({url:"pages/Test"})
+          .onClick(() => {
+            router.pushUrl({ url: "pages/Test" })
           })
       }
       .width('100%')
@@ -121,7 +119,7 @@ struct Index {
     // 发起网络请求
     httpRequest.request(this.testUrl, options, (error, data: http.HttpResponse) => {
       if (error) {
-        this.res = '请求失败: ' + error.message
+        this.libname = '请求失败: ' + error.message
         return
       }
       // 确保响应数据有效，并且是 JSON 格式
@@ -130,13 +128,15 @@ struct Index {
         try {
           this.lib = JSON.parse(data.result)
           // 更新状态，显示图书馆名称
-          this.res = `图书馆名称: ${this.lib.name}`
-          this.url = '' + this.lib.books[0].imageUrl
+          this.libname = `图书馆名称: ${this.lib.name}`
+          this.liblocation = this.lib.location
+          this.libtelephoneNumber = this.lib.telephoneNumber
+          this.libdescription = this.lib.description
         } catch (e) {
-          this.res = '解析 JSON 失败'
+          this.libname = '解析 JSON 失败'
         }
       } else {
-        this.res = '无效的响应数据'
+        this.libname = '无效的响应数据'
       }
     })
   }
