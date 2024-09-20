@@ -1,6 +1,8 @@
 import http from '@ohos.net.http'
 import Url from '@ohos.url'
 import router from '@ohos.router'
+import EntryAbility from '../entryability/EntryAbility'
+import window from '@ohos.window'
 
 let httpRequest = http.createHttp()
 
@@ -42,9 +44,25 @@ class Library {
   // }
 }
 
+
 @Entry
 @Component
 struct Index {
+  private enrtyAli = new EntryAbility()
+
+  onPageShow() {
+    this.enrtyAli.destroySubWindow()
+    let routerState = router.getState()
+    console.info('index name', routerState.name)
+
+    if (routerState.name == 'Index') {
+      this.enrtyAli.showSubWindow()
+    } else {
+      this.enrtyAli.destroySubWindow()
+    }
+
+  }
+
   @State res: string = ''
   private testUrl = 'http://03bb4619e4c041a1b67d306114fe8106.apig.cn-south-1.huaweicloudapis.com/vnihugw'
   @State url: string = ''
@@ -52,31 +70,42 @@ struct Index {
   private lib: Library = null
 
   build() {
-    Column() {
-      Row() {
-        Button('请求网络')
-          .fontSize(20)
-          .fontColor(Color.Orange)
-          .margin(10)
-          .onClick(() => {
-            this.onRequestHttpData()
-          })
-        Button('去phone')
-          .onClick(() => {
-            router.pushUrl({ url: 'pages/phone' })
+    Stack() {
+      Column() {
+        Row() {
+          Button('请求网络')
+            .fontSize(20)
+            .fontColor(Color.Orange)
+            .margin(10)
+            .onClick(() => {
+              this.onRequestHttpData()
+            })
+          Button('去phone')
+            .onClick(() => {
+              router.pushUrl({ url: 'pages/phone' })
+            })
+        }
+        Text(this.res)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+        Text(this.url)
+        Image(this.url)
+          .width('100%')
+          .height(200)
+        Button('测试')
+          .position({ x: 0, y: 300 })
+          .zIndex(999)
+          .width(100)
+          .height(100)
+          .onClick(()=>{
+            router.pushUrl({url:"pages/Test"})
           })
       }
-
-      Text(this.res)
-        .fontSize(25)
-        .fontWeight(FontWeight.Bold)
-      Text(this.url)
-      Image(this.url)
-        .width('100%')
-        .height(200)
+      .width('100%')
+      .margin(0)
 
     }
-    .width('100%')
+
   }
 
   onRequestHttpData() {
@@ -89,7 +118,6 @@ struct Index {
       connectTimeout: 60000,
       readTimeout: 60000
     }
-
     // 发起网络请求
     httpRequest.request(this.testUrl, options, (error, data: http.HttpResponse) => {
       if (error) {
@@ -100,15 +128,6 @@ struct Index {
       if (data && typeof data.result === 'string') {
         let parsedData: Library = JSON.parse(data.result)
         try {
-          // 解析 JSON 数据并赋值给 lib
-          // this.lib = new Library(
-          //   parsedData.name,
-          //   parsedData.location,
-          //   parsedData.telephoneNumber,
-          //   parsedData.description,
-          //   parsedData.books.map((item: Book) =>
-          //   new Book(item.id, item.title, item.author, item.description, item.imageUrl))
-          // )
           this.lib = JSON.parse(data.result)
           // 更新状态，显示图书馆名称
           this.res = `图书馆名称: ${this.lib.name}`

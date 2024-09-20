@@ -7,7 +7,7 @@ let windowStage_: window.WindowStage | null = null;
 let sub_windowClass: window.Window | null = null;
 
 export default class EntryAbility extends UIAbility {
-  showSubWindow() {
+  public showSubWindow() {
     // 1.创建应用子窗口。
     if (windowStage_ == null) {
       console.error('Failed to create the subwindow. Cause: windowStage_ is null');
@@ -23,7 +23,7 @@ export default class EntryAbility extends UIAbility {
         console.info('Succeeded in creating the subwindow. Data: ' + JSON.stringify(data));
         // 2.子窗口创建成功后，设置子窗口的位置、大小及相关属性等。
         //窗口位置
-        sub_windowClass.moveWindowTo(0, 800, (err) => {
+        sub_windowClass.moveWindowTo(0, 900, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to move the window. Cause:' + JSON.stringify(err));
@@ -32,14 +32,15 @@ export default class EntryAbility extends UIAbility {
           console.info('Succeeded in moving the window.');
         });
         //定义窗口大小
-        sub_windowClass.resize(1000, 1000, (err) => {
+        sub_windowClass.resize(300, 300, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
             return;
           }
           console.info('Succeeded in changing the window size.');
-        });
+        })
+
         // 3.为子窗口加载对应的目标页面。
 
         sub_windowClass.setUIContent("pages/MyWindows", (err) => {
@@ -61,9 +62,15 @@ export default class EntryAbility extends UIAbility {
         });
       })
     }
+    let windowsClass = null
+    let promise = windowStage_.getMainWindow()
+    promise.then((data) => {
+      windowsClass = data
+      console.log('zhu', JSON.stringify(data))
+    })
   }
 
-  destroySubWindow() {
+  public destroySubWindow() {
     // 4.销毁子窗口。当不再需要子窗口时，可根据具体实现逻辑，使用destroy对其进行销毁。
     (sub_windowClass as window.Window).destroyWindow((err) => {
       let errCode: number = err.code;
@@ -84,6 +91,26 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageCreate(windowStage: window.WindowStage) {
+    // 1.获取应用主窗口。
+    let windowClass = null;
+    windowStage.getMainWindow((err, data) => {
+      if (err.code) {
+        console.error('Failed to obtain the main window. Cause: ' + JSON.stringify(err));
+        return;
+      }
+      windowClass = data;
+      console.info('Succeeded in obtaining the main window. Data: ' + JSON.stringify(data));
+      // 2.设置主窗口属性。以设置"是否可触"属性为例。
+      let isTouchable = true;
+      windowClass.setWindowTouchable(isTouchable, (err) => {
+        if (err.code) {
+          console.error('Failed to set the window to be touchable. Cause:' + JSON.stringify(err));
+          return;
+        }
+        console.info('Succeeded in setting the window to be touchable.');
+      })
+    })
+
 
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
@@ -96,7 +123,6 @@ export default class EntryAbility extends UIAbility {
       }
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
     });
-
 
   }
 
