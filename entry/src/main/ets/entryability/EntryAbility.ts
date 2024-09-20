@@ -2,6 +2,7 @@ import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
 import router from '@ohos.router';
+import relationalStore from '@ohos.data.relationalStore';
 
 let windowStage_: window.WindowStage | null = null;
 let sub_windowClass: window.Window | null = null;
@@ -91,6 +92,80 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageCreate(windowStage: window.WindowStage) {
+    //本地数据库SQLlite
+    //数据库配置
+    const STORE_CONFIG = {
+      name: 'Library.db', // 数据库文件名
+      securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
+    };
+    // 建表BOOKS的Sql语句
+    const SQL_CREATE_TABLE = 'CREATE TABLE IF NOT EXISTS BOOKS (ID INTEGER PRIMARY KEY AUTOINCREMENT, TITTLE TEXT NOT NULL, AUTHOR TEXT NOT NULL, DESCRIPTION TEXT NOT NULL, IMAGEURL TEXT NOT NULL)';
+
+    // 作关系型数据库，用户可以根据自己的需求配置RdbStore的参数，然后通过RdbStore调用相关接口可以执行相关的数据操作，使用callback异步回调。this.context应用的上下文
+
+    //创建数据库并获取RdbStore
+    relationalStore.getRdbStore(this.context, STORE_CONFIG, (err, store) => {
+      if (err) {
+        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        return;
+      }
+      console.info(`Succeeded in getting RdbStore.`);
+
+      // 创建数据表
+      // executeSql()执行包含指定参数但不返回值的SQL语句。
+      store.executeSql(SQL_CREATE_TABLE);
+      // 创建表'BOOKS'的 predicates  谓语
+      let predicates = new relationalStore.RdbPredicates('BOOKS');
+      /*
+       * 增 2、获取到RdbStore后，调用insert()接口插入数据。示例代码如下所示：
+       * todo
+       */
+      //要写入的数据
+      const valuebook = {
+        "ID": 1,
+        "TITTLE": "解忧杂货店",
+        "AUTHOR": "东野圭吾",
+        "DESCRIPTION": "这是一部温暖人心的小说，通过回答过去与现在之间的信件，讲述了人与人之间的联系和理解。",
+        "IMAGEURL": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/7bf53134b81136c75759be088e39e579_360x480.jpg"
+      };
+      store.insert('BOOKS', valuebook, (err, rowId) => {
+        if (err) {
+          console.error(`Failed to insert data. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+        console.info(`Succeeded in inserting data. rowId:${rowId}`);
+      });
+
+      /*
+      * 查根据谓词指定的查询条件查找数据。调用query()方法查找数据，返回一个ResultSet结果集。示例代码如下所示：
+      * todo
+       */
+      // predicates.equalTo('NAME', 'Linda');
+      store.query(predicates, ['ID', 'TITTLE', 'AUTHOR', 'DESCRIPTION', 'IMAGEURL'], (err, resultSet) => {
+        if (err) {
+          console.error(`Failed to query data. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+
+        // 遍历 ResultSet 的行数据
+        while (resultSet.goToNextRow()) {
+          const id = resultSet.getLong(0); // 第一列：ID
+          const tittle = resultSet.getString(1); // 第二列：NAME
+          const author = resultSet.getString(2); // 第三列：AGE
+          const description = resultSet.getString(3); // 第四列：SALARY
+          const imageUrl = resultSet.getString(4); // 第五列：CODES
+
+          // 打印出结果
+          console.info(`Row22: ID=${id}, TITTLE=${tittle}, AUTHOR=${author}, DESCRIPTION=${description}, IMAGEURL=${imageUrl}`);
+        }
+
+        // 关闭 ResultSet
+        resultSet.close();
+      });
+
+
+    });
+
     // 1.获取应用主窗口。
     let windowClass = null;
     windowStage.getMainWindow((err, data) => {
