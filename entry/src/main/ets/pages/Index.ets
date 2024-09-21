@@ -76,10 +76,17 @@ struct Index {
             .onClick(() => {
               router.pushUrl({ url: 'pages/phone' })
             })
+        }
+        Row(){
+          Button('去BookDetail')
+            .onClick(() => {
+              router.pushUrl({ url: 'pages/BookDetail' })
+            })
           Button('获取数据库图书馆')
             .onClick(() => {
               this.getlib()
             })
+
         }
 
         Text(this.libname)

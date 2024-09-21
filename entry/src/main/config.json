@@ -1,0 +1,11 @@
+{
+  "module": {
+    "abilities": [
+      {
+        "permissions": [
+          "ohos.permission.READ_USER_STORAGE"
+        ]
+      }
+    ]
+  }
+}
