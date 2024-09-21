@@ -1,12 +1,12 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
-import router from '@ohos.router';
 
 let windowStage_: window.WindowStage | null = null;
 let sub_windowClass: window.Window | null = null;
 
 export default class EntryAbility extends UIAbility {
+  //创建窗口
   public showSubWindow() {
     // 1.创建应用子窗口。
     if (windowStage_ == null) {
@@ -20,6 +20,7 @@ export default class EntryAbility extends UIAbility {
           return;
         }
         sub_windowClass = data;
+        // console.info(`window data${JSON.stringify(sub_windowClass.)}`)
         console.info('Succeeded in creating the subwindow. Data: ' + JSON.stringify(data));
         // 2.子窗口创建成功后，设置子窗口的位置、大小及相关属性等。
         //窗口位置
@@ -32,7 +33,7 @@ export default class EntryAbility extends UIAbility {
           console.info('Succeeded in moving the window.');
         });
         //定义窗口大小
-        sub_windowClass.resize(300, 300, (err) => {
+        sub_windowClass.resize(200, 200, (err) => {
           let errCode: number = err.code;
           if (errCode) {
             console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
@@ -40,9 +41,8 @@ export default class EntryAbility extends UIAbility {
           }
           console.info('Succeeded in changing the window size.');
         })
-
+        sub_windowClass.setWindowFocusable(false)
         // 3.为子窗口加载对应的目标页面。
-
         sub_windowClass.setUIContent("pages/MyWindows", (err) => {
           let errCode: number = err.code;
           if (errCode) {
@@ -50,6 +50,7 @@ export default class EntryAbility extends UIAbility {
             return;
           }
           console.info('Succeeded in loading the content.');
+
           // 3.显示子窗口。
           (sub_windowClass as window.Window).showWindow((err) => {
             let errCode: number = err.code;
@@ -62,14 +63,8 @@ export default class EntryAbility extends UIAbility {
         });
       })
     }
-    let windowsClass = null
-    let promise = windowStage_.getMainWindow()
-    promise.then((data) => {
-      windowsClass = data
-      console.log('zhu', JSON.stringify(data))
-    })
   }
-
+  //销毁窗口
   public destroySubWindow() {
     // 4.销毁子窗口。当不再需要子窗口时，可根据具体实现逻辑，使用destroy对其进行销毁。
     (sub_windowClass as window.Window).destroyWindow((err) => {
@@ -111,19 +106,18 @@ export default class EntryAbility extends UIAbility {
       })
     })
 
-
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
     windowStage_ = windowStage
     this.showSubWindow()
+    AppStorage.SetOrCreate('windowStage', windowStage)
     windowStage.loadContent('pages/Index', (err, data) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;
       }
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
-    });
-
+    })
   }
 
   onWindowStageDestroy() {

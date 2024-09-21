@@ -3,6 +3,7 @@ import Url from '@ohos.url'
 import router from '@ohos.router'
 import EntryAbility from '../entryability/EntryAbility'
 import window from '@ohos.window'
+import emitter from '@ohos.events.emitter'
 
 let httpRequest = http.createHttp()
 
@@ -29,43 +30,39 @@ class Book {
 
 // 定义 Library 类
 class Library {
-  name: string
-  location: string
-  telephoneNumber: string
-  description: string
-  books: Book[]
-
-  // constructor(name: string, location: string, telephoneNumber: string, description: string, books: Book[]) {
-  //   this.name = name
-  //   this.location = location
-  //   this.telephoneNumber = telephoneNumber
-  //   this.description = description
-  //   this.books = books
-  // }
+  NAME: string
+  TITLE: string
+  TELEPHONE: string
 }
-
+//确定要接受订阅的事件id
+let innerEvent: emitter.InnerEvent = {
+  eventId: 1
+};
+//接收事件后跳转
+emitter.on(innerEvent, () => {
+  router.pushUrl({ url: 'pages/Test' })
+})
 
 @Entry
 @Component
 struct Index {
   private enrtyAli = new EntryAbility()
-
+  //在页面展示时判断是否生成子窗口
   onPageShow() {
     this.enrtyAli.destroySubWindow()
     let routerState = router.getState()
     console.info('index name', routerState.name)
-
     if (routerState.name == 'Index') {
       this.enrtyAli.showSubWindow()
     } else {
       this.enrtyAli.destroySubWindow()
     }
-
   }
 
   @State res: string = ''
   private testUrl = 'http://03bb4619e4c041a1b67d306114fe8106.apig.cn-south-1.huaweicloudapis.com/vnihugw'
-  @State url: string = ''
+  @State title: string = ''
+  @State telephone: string = ''
   // 初始化 Library 对象
   private lib: Library = null
 
@@ -85,21 +82,16 @@ struct Index {
               router.pushUrl({ url: 'pages/phone' })
             })
         }
+
         Text(this.res)
           .fontSize(25)
           .fontWeight(FontWeight.Bold)
-        Text(this.url)
-        Image(this.url)
-          .width('100%')
-          .height(200)
-        Button('测试')
-          .position({ x: 0, y: 300 })
-          .zIndex(999)
-          .width(100)
-          .height(100)
-          .onClick(()=>{
-            router.pushUrl({url:"pages/Test"})
-          })
+        Text(this.title)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+        Text(this.telephone)
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
       }
       .width('100%')
       .margin(0)
@@ -130,8 +122,9 @@ struct Index {
         try {
           this.lib = JSON.parse(data.result)
           // 更新状态，显示图书馆名称
-          this.res = `图书馆名称: ${this.lib.name}`
-          this.url = '' + this.lib.books[0].imageUrl
+          this.res = `图书馆名称: ${this.lib.NAME}`
+          this.title = `图书馆简介：${this.lib.TITLE}`
+          this.telephone = `图书馆电话：${this.lib.TELEPHONE}`
         } catch (e) {
           this.res = '解析 JSON 失败'
         }

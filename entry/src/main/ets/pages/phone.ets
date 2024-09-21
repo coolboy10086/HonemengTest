@@ -1,16 +1,17 @@
 import call from '@ohos.telephony.call'
-import UIAbility from '@ohos.app.ability.UIAbility';
-import window from '@ohos.window';
+
 import router from '@ohos.router';
 import EntryAbility from '../entryability/EntryAbility';
-// import EntryAbility from '../entryability/EntryAbility';
 
 @Entry
 @Component
 @Preview
 struct phone {
+  //拨号时间
   phone() {
+    //看一下机体是否支持通话
     let okphone = call.hasVoiceCapability()
+    //ok 的话，拉起应用，打电话
     if (okphone) {
       call.makeCall('15976786774', (err) => {
         if (!err) {
@@ -23,10 +24,9 @@ struct phone {
   }
 
   private entryAbi = new EntryAbility()
-
+  //在页面展示时判断是否生成子窗口
   onPageShow() {
     const routerState = router.getState()
-    this.message = routerState.name
     // const entryAbility = router.getAbilityInstance();
     if (routerState.name != 'Index') {
       console.info('okokok', routerState.name);
@@ -35,7 +35,6 @@ struct phone {
   }
 
   @State message: string = ''
-  // private EntryAbility: EntryAbility
 
   build() {
 
@@ -44,7 +43,6 @@ struct phone {
         .onClick(() => {
           router.pushUrl({ url: 'pages/Index' })
         })
-      Text(this.message)
       Image($r('app.media.phone'))
         .width(50)
         .height(50)
