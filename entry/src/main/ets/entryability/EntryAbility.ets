@@ -3,13 +3,15 @@ import hilog from '@ohos.hilog';
 import window from '@ohos.window';
 import router from '@ohos.router';
 import relationalStore from '@ohos.data.relationalStore';
+import contextConstant from '@ohos.app.ability.contextConstant';
 
 let windowStage_: window.WindowStage | null = null;
 let sub_windowClass: window.Window | null = null;
+let context_create: Context
 
 export default class EntryAbility extends UIAbility {
+  // 1.创建应用子窗口。
   public showSubWindow() {
-    // 1.创建应用子窗口。
     if (windowStage_ == null) {
       console.error('Failed to create the subwindow. Cause: windowStage_ is null');
     }
@@ -71,8 +73,8 @@ export default class EntryAbility extends UIAbility {
     })
   }
 
+  // 4.销毁子窗口。当不再需要子窗口时，可根据具体实现逻辑，使用destroy对其进行销毁。
   public destroySubWindow() {
-    // 4.销毁子窗口。当不再需要子窗口时，可根据具体实现逻辑，使用destroy对其进行销毁。
     (sub_windowClass as window.Window).destroyWindow((err) => {
       let errCode: number = err.code;
       if (errCode) {
@@ -82,9 +84,80 @@ export default class EntryAbility extends UIAbility {
       console.info('Succeeded in destroying the window.');
     });
   }
+  // 插入图书馆数据
+  public insertLibrary(NAME: string, LOCATION: string, TELEPHONENUMBER: string, DESCRIPTION: string) {
+    let STORE_CONFIG = {
+      name: 'Library.db', // 数据库文件名
+      securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
+    };
+    relationalStore.getRdbStore(context_create, STORE_CONFIG, (err, store) => {
+      if (err) {
+        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        return;
+      }
+      console.info(`Succeeded in getting RdbStore.`);
+      //谓语
+      // let predicates = new relationalStore.RdbPredicates('LIBRARY');
+      //初始化数据
+      const valuelibrary = {
+        "NAME": NAME,
+        "LOCATION": LOCATION,
+        "TELEPHONENUMBER": TELEPHONENUMBER,
+        "DESCRIPTION": DESCRIPTION
+      };
+      store.insert('lIBRARY', valuelibrary, (err, rowId) => {
+        if (err) {
+          console.error(`Failed to insert data. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+        console.info(`Succeeded in inserting data. rowId:${rowId}`);
+      });
+    });
+  }
+  //取出图书馆数据
+  public getLibrary(NAME: string) {
+    let STORE_CONFIG = {
+      name: 'Library.db', // 数据库文件名
+      securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
+    };
+    relationalStore.getRdbStore(context_create, STORE_CONFIG, (err, store) => {
+      if (err) {
+        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        return;
+      }
+      console.info(`Succeeded in getting RdbStore.`);
+
+      let predicates = new relationalStore.RdbPredicates('LIBRARY');
+
+      predicates.equalTo('NAME', NAME);
+      store.query(predicates, ['ID', 'NAME', 'LOCATION', 'TELEPHONENUMBER', 'DESCRIPTION'], (err, resultSet) => {
+        if (err) {
+          console.error(`Failed to query data. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+
+        // 遍历 ResultSet 的行数据
+        while (resultSet.goToNextRow()) {
+          const id = resultSet.getLong(0); // 第一列：ID
+          const name = resultSet.getString(1); // 第二列：NAME
+          const location = resultSet.getString(2); // 第三列：AGE
+          const telephoneNumber = resultSet.getString(3); // 第四列：SALARY
+          const description = resultSet.getString(4); // 第五列：CODES
+
+          // 打印出结果
+          console.info(`Row22: ID=${id}, NAME=${name}, LOCATION=${location}, TELEPHONENUMBWE=${telephoneNumber}, DESCRIPTION=${description}`);
+        }
+
+        // 关闭 ResultSet
+        resultSet.close();
+      });
+    });
+  }
 
   onCreate(want, launchParam) {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+    // 初始化 context
+    console.log('Context111:', this.context); // 打印 context 确保其初始化
   }
 
   onDestroy() {
@@ -103,14 +176,14 @@ export default class EntryAbility extends UIAbility {
     const SQL_CREATE_TABLE_LIBRARY = 'CREATE TABLE IF NOT EXISTS LIBRARY (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL, LOCATION TEXT NOT NULL, TELEPHONENUMBER TEXT NOT NULL, DESCRIPTION TEXT NOT NULL)';
 
     // 作关系型数据库，用户可以根据自己的需求配置RdbStore的参数，然后通过RdbStore调用相关接口可以执行相关的数据操作，使用callback异步回调。this.context应用的上下文
-
+    context_create = this.context;
     //创建数据库并获取RdbStore
     relationalStore.getRdbStore(this.context, STORE_CONFIG, (err, store) => {
       if (err) {
-        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        // console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
         return;
       }
-      console.info(`Succeeded in getting RdbStore.`);
+      // console.info(`Succeeded in getting RdbStore.`);
 
       // 创建数据表
       // executeSql()执行包含指定参数但不返回值的SQL语句。
@@ -166,53 +239,53 @@ export default class EntryAbility extends UIAbility {
       //   resultSet.close();
       // });
 
-      // 创建表'lIBRARY'的 predicates  谓语
-      let predicates = new relationalStore.RdbPredicates('LIBRARY');
-      /*
-       * 增 2、获取到RdbStore后，调用insert()接口插入数据。示例代码如下所示：
-       * todo
-       */
-      //要写入的数据
-      const valuelibrary = {
-        "NAME": "市中心图书馆",
-        "LOCATION": "市中心大街123号",
-        "TELEPHONENUMBER": "0769-83398746",
-        "DESCRIPTION": "市中心图书馆，城市的文化地标，藏书丰富，环境优雅。这里不仅是知识的海洋，更是市民学习的乐园。现代科技与传统阅读完美融合，提供电子阅读、自助借还等便捷服务。无论老少，皆能在此找到心灵的栖息地，享受阅读的乐趣，启迪智慧，丰富生活。"
-      };
-      store.insert('lIBRARY', valuelibrary, (err, rowId) => {
-        if (err) {
-          console.error(`Failed to insert data. Code:${err.code}, message:${err.message}`);
-          return;
-        }
-        console.info(`Succeeded in inserting data. rowId:${rowId}`);
-      });
-
-      /*
-      * 查根据谓词指定的查询条件查找数据。调用query()方法查找数据，返回一个ResultSet结果集。示例代码如下所示：
-      * todo
-       */
-      // predicates.equalTo('NAME', 'Linda');
-      store.query(predicates, ['ID', 'NAME', 'LOCATION', 'TELEPHONENUMBER', 'DESCRIPTION'], (err, resultSet) => {
-        if (err) {
-          console.error(`Failed to query data. Code:${err.code}, message:${err.message}`);
-          return;
-        }
-
-        // 遍历 ResultSet 的行数据
-        while (resultSet.goToNextRow()) {
-          const id = resultSet.getLong(0); // 第一列：ID
-          const name = resultSet.getString(1); // 第二列：NAME
-          const location = resultSet.getString(2); // 第三列：AGE
-          const telephoneNumber = resultSet.getString(3); // 第四列：SALARY
-          const description = resultSet.getString(4); // 第五列：CODES
-
-          // 打印出结果
-          console.info(`Row22: ID=${id}, NAME=${name}, LOCATION=${location}, TELEPHONENUMBWE=${telephoneNumber}, DESCRIPTION=${description}`);
-        }
-
-        // 关闭 ResultSet
-        resultSet.close();
-      });
+      // // 创建表'lIBRARY'的 predicates  谓语
+      // let predicates = new relationalStore.RdbPredicates('LIBRARY');
+      // /*
+      //  * 增 2、获取到RdbStore后，调用insert()接口插入数据。示例代码如下所示：
+      //  * todo
+      //  */
+      // //要写入的数据
+      // const valuelibrary = {
+      //   "NAME": "市中心图书馆",
+      //   "LOCATION": "市中心大街123号",
+      //   "TELEPHONENUMBER": "0769-83398746",
+      //   "DESCRIPTION": "市中心图书馆，城市的文化地标，藏书丰富，环境优雅。这里不仅是知识的海洋，更是市民学习的乐园。现代科技与传统阅读完美融合，提供电子阅读、自助借还等便捷服务。无论老少，皆能在此找到心灵的栖息地，享受阅读的乐趣，启迪智慧，丰富生活。"
+      // };
+      // store.insert('lIBRARY', valuelibrary, (err, rowId) => {
+      //   if (err) {
+      //     console.error(`Failed to insert data. Code:${err.code}, message:${err.message}`);
+      //     return;
+      //   }
+      //   console.info(`Succeeded in inserting data. rowId:${rowId}`);
+      // });
+      //
+      // /*
+      // * 查根据谓词指定的查询条件查找数据。调用query()方法查找数据，返回一个ResultSet结果集。示例代码如下所示：
+      // * todo
+      //  */
+      // // predicates.equalTo('NAME', 'Linda');
+      // store.query(predicates, ['ID', 'NAME', 'LOCATION', 'TELEPHONENUMBER', 'DESCRIPTION'], (err, resultSet) => {
+      //   if (err) {
+      //     console.error(`Failed to query data. Code:${err.code}, message:${err.message}`);
+      //     return;
+      //   }
+      //
+      //   // 遍历 ResultSet 的行数据
+      //   while (resultSet.goToNextRow()) {
+      //     const id = resultSet.getLong(0); // 第一列：ID
+      //     const name = resultSet.getString(1); // 第二列：NAME
+      //     const location = resultSet.getString(2); // 第三列：AGE
+      //     const telephoneNumber = resultSet.getString(3); // 第四列：SALARY
+      //     const description = resultSet.getString(4); // 第五列：CODES
+      //
+      //     // 打印出结果
+      //     console.info(`Row22: ID=${id}, NAME=${name}, LOCATION=${location}, TELEPHONENUMBWE=${telephoneNumber}, DESCRIPTION=${description}`);
+      //   }
+      //
+      //   // 关闭 ResultSet
+      //   resultSet.close();
+      // });
 
     });
 

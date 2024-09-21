@@ -76,6 +76,10 @@ struct Index {
             .onClick(() => {
               router.pushUrl({ url: 'pages/phone' })
             })
+          Button('获取数据库图书馆')
+            .onClick(() => {
+              this.getlib()
+            })
         }
 
         Text(this.libname)
@@ -106,6 +110,10 @@ struct Index {
 
   }
 
+  getlib() {
+    this.enrtyAli.getLibrary(this.libname)
+  }
+
   onRequestHttpData() {
     let options: http.HttpRequestOptions = {
       extraData: ["data", "data to send"],
@@ -119,16 +127,15 @@ struct Index {
     // 发起网络请求
     httpRequest.request(this.testUrl, options, (error, data: http.HttpResponse) => {
       if (error) {
-        this.libname = '请求失败: ' + error.message
+        // this.libname = '请求失败: ' + error.message
         return
       }
       // 确保响应数据有效，并且是 JSON 格式
       if (data && typeof data.result === 'string') {
-        let parsedData: Library = JSON.parse(data.result)
         try {
           this.lib = JSON.parse(data.result)
           // 更新状态，显示图书馆名称
-          this.libname = `图书馆名称: ${this.lib.name}`
+          this.libname = this.lib.name
           this.liblocation = this.lib.location
           this.libtelephoneNumber = this.lib.telephoneNumber
           this.libdescription = this.lib.description
@@ -137,6 +144,15 @@ struct Index {
         }
       } else {
         this.libname = '无效的响应数据'
+      }
+      // 调用入口文件中的方法在向数据库中存入数据
+      try {
+        console.info('storeLib', '调用')
+        console.info('storeLib', this.libname)
+        this.enrtyAli.insertLibrary(this.libname, this.liblocation, this.libtelephoneNumber, this.libdescription)
+      } catch (e) {
+        console.log('storeLib', e)
+        console.log('storeLib', '存入失败')
       }
     })
   }
