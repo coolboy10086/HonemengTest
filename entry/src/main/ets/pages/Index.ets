@@ -2,6 +2,7 @@ import http from '@ohos.net.http'
 import Url from '@ohos.url'
 import router from '@ohos.router'
 import EntryAbility from '../entryability/EntryAbility'
+import util from '@ohos.util'
 
 let httpRequest = http.createHttp()
 
@@ -17,13 +18,13 @@ class Book {
   description: string
   imageUrl: imageUrl
 
-  // constructor(id: number, title: string, author: string, description: string, imageUrl: imageUrl) {
-  //   this.id = id
-  //   this.title = title
-  //   this.author = author
-  //   this.description = description
-  //   this.imageUrl = imageUrl
-  // }
+  constructor(id: number, title: string, author: string, description: string, imageUrl: imageUrl) {
+    this.id = id
+    this.title = title
+    this.author = author
+    this.description = description
+    this.imageUrl = imageUrl
+  }
 }
 
 // 定义 Library 类
@@ -60,6 +61,8 @@ struct Index {
   private testUrl = 'https://1ffc8088cc224333a4ea2cf62fb31bcd.apig.cn-east-3.huaweicloudapis.com/API_test1'
   // 初始化 Library 对象
   private lib: Library = null
+  @State value: string = '66666';
+  @State BookData: Book[] = []
 
   build() {
     Stack() {
@@ -79,9 +82,20 @@ struct Index {
           Button('获取数据库图书馆')
             .onClick(() => {
               this.getlib()
+              console.log("BookData", this.BookData[0].title)
+              console.log("BookData", this.BookData[0].imageUrl)
+              console.log("BookData", this.BookData[0].imageUrl.imageUrl)
             })
         }
 
+        Row() {
+          Button('book').onClick(() => {
+            this.getbook()
+          })
+        }
+
+        Text(this.value)
+        Text(JSON.stringify(this.BookData))
         Text(this.libname)
           .fontSize(25)
           .fontWeight(FontWeight.Bold)
@@ -112,6 +126,43 @@ struct Index {
 
   getlib() {
     this.enrtyAli.getLibrary(this.libname)
+  }
+
+  getbook() {
+    console.log("getbook", "getbook")
+    try {
+      let context = getContext(this); // 获取当前 context 对象
+      let resourceManager = context.resourceManager;
+      resourceManager.getRawFileContent("book.json", (error, value) => {
+        if (error != null) {
+          console.error("error is " + error);
+          this.value = JSON.stringify(error);
+        } else {
+          let rawFile = value;
+          let textDecoder = util.TextDecoder.create('utf-8', { ignoreBOM: true });
+          let retStr = textDecoder.decodeWithStream(rawFile);
+          try {
+            let booksJson = JSON.parse(retStr);
+            if (Array.isArray(booksJson)) {
+              this.BookData = booksJson.map((bookJson) => new Book(
+                bookJson.id,
+                bookJson.title,
+                bookJson.author,
+                bookJson.description,
+                bookJson.imageUrl.imageUrl // 假设您的 JSON 格式中 imageUrl 字段是一个对象，且包含一个 imageUrl 属性
+              ));
+            } else {
+              console.error('Parsed JSON is not an array');
+            }
+          } catch (parseError) {
+            console.error("Failed to parse JSON: " + parseError);
+          }
+        }
+      });
+    } catch (error) {
+      this.value = JSON.stringify(error)
+      console.error(`callback getRawFileContent failed, error code: ${error.code}, message: ${error.message}.`);
+    }
   }
 
   onRequestHttpData() {
@@ -147,8 +198,6 @@ struct Index {
       }
       // 调用入口文件中的方法在向数据库中存入数据
       try {
-        console.info('storeLib', '调用')
-        console.info('storeLib', this.libname)
         this.enrtyAli.insertLibrary(this.libname, this.liblocation, this.libtelephoneNumber, this.libdescription)
       } catch (e) {
         console.log('storeLib', e)

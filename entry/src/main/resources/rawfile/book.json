@@ -1,39 +1,37 @@
-{
-    "books": [
-        {
-            "id": 1,
-            "title": "解忧杂货店",
-            "author": "东野圭吾",
-            "description": "这是一部温暖人心的小说，通过回答过去与现在之间的信件，讲述了人与人之间的联系和理解。",
-            "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/7bf53134b81136c75759be088e39e579_360x480.jpg"
-        },
-        {
-            "id": 2,
-            "title": "百年孤独",
-            "author": "加西亚·马尔克斯",
-            "description": "这部作品是魔幻现实主义文学的经典之作，讲述了布恩迪亚家族七代人的故事，以及他们与马孔多世界的奇妙联系。",
-            "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/f09510fc0802af92a89f18eb6f1629c4_360x480.jpg"
-        },
-        {
-            "id": 3,
-            "title": "人间悲剧",
-            "author": "卡勒德·胡赛尼",
-            "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
-            "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/46d68f2cf08627a9b498cbba0b1b39e1_360x480.jpg"
-        },
-        {
-            "id": 4,
-            "title": "活着",
-            "author": "卡勒德·胡赛尼",
-            "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
-            "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/351f99eb5983524cf1dcc672bd36524d_360x480.jpg"
-        },
-        {
-            "id": 5,
-            "title": "摆摊卖炒粉的10086天",
-            "author": "卡勒德·胡赛尼",
-            "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
-            "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/351f99eb5983524cf1dcc672bd36524d_360x480.jpg"
-        }
-    ]
-}
+[
+  {
+    "id": 1,
+    "title": "解忧杂货店",
+    "author": "东野圭吾",
+    "description": "这是一部温暖人心的小说，通过回答过去与现在之间的信件，讲述了人与人之间的联系和理解。",
+    "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/7bf53134b81136c75759be088e39e579_360x480.jpg"
+  },
+  {
+    "id": 2,
+    "title": "百年孤独",
+    "author": "加西亚·马尔克斯",
+    "description": "这部作品是魔幻现实主义文学的经典之作，讲述了布恩迪亚家族七代人的故事，以及他们与马孔多世界的奇妙联系。",
+    "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/f09510fc0802af92a89f18eb6f1629c4_360x480.jpg"
+  },
+  {
+    "id": 3,
+    "title": "人间悲剧",
+    "author": "卡勒德·胡赛尼",
+    "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
+    "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/46d68f2cf08627a9b498cbba0b1b39e1_360x480.jpg"
+  },
+  {
+    "id": 4,
+    "title": "活着",
+    "author": "卡勒德·胡赛尼",
+    "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
+    "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/351f99eb5983524cf1dcc672bd36524d_360x480.jpg"
+  },
+  {
+    "id": 5,
+    "title": "摆摊卖炒粉的10086天",
+    "author": "卡勒德·胡赛尼",
+    "description": "https://ts2.cn.mm.bing.net/th?id=OIP-C.4JXmzzm6p9NJ1FxMHG9feAHaE8&w=306&h=204&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
+    "imageUrl": "https://cdn.wtzw.com/bookimg/public/images/cover/a3c6/351f99eb5983524cf1dcc672bd36524d_360x480.jpg"
+  }
+]

@@ -1,6 +1,7 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
+import Url from '@ohos.url'
 import router from '@ohos.router';
 import relationalStore from '@ohos.data.relationalStore';
 import contextConstant from '@ohos.app.ability.contextConstant';
@@ -72,7 +73,6 @@ export default class EntryAbility extends UIAbility {
       console.log('zhu', JSON.stringify(data))
     })
   }
-
   // 4.销毁子窗口。当不再需要子窗口时，可根据具体实现逻辑，使用destroy对其进行销毁。
   public destroySubWindow() {
     (sub_windowClass as window.Window).destroyWindow((err) => {
@@ -107,10 +107,10 @@ export default class EntryAbility extends UIAbility {
       };
       store.insert('lIBRARY', valuelibrary, (err, rowId) => {
         if (err) {
-          console.error(`Failed to insert data. Code:${err.code}, message:${err.message}`);
+          console.error(`Failed to insert Library. Code:${err.code}, message:${err.message}`);
           return;
         }
-        console.info(`Succeeded in inserting data. rowId:${rowId}`);
+        console.info(`Succeeded in inserting Library. rowId:${rowId}`);
       });
     });
   }
@@ -150,6 +150,36 @@ export default class EntryAbility extends UIAbility {
 
         // 关闭 ResultSet
         resultSet.close();
+      });
+    });
+  }
+  //存储书籍数据
+  public insertBook(NAME: string, AUTHOR: string, DESCRIPTION: string, IMAGEURL: string) {
+    let STORE_CONFIG = {
+      name: 'Library.db', // 数据库文件名
+      securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
+    };
+    relationalStore.getRdbStore(context_create, STORE_CONFIG, (err, store) => {
+      if (err) {
+        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        return;
+      }
+      console.info(`Succeeded in getting RdbStore.`);
+      //谓语
+      // let predicates = new relationalStore.RdbPredicates('LIBRARY');
+      //初始化数据
+      const valuebook = {
+        "NAME": NAME,
+        "AUTHOR": AUTHOR,
+        "DESCRIPTION": DESCRIPTION,
+        "IMAGEURL": IMAGEURL
+      };
+      store.insert('BOOKS', valuebook, (err, rowId) => {
+        if (err) {
+          console.error(`Failed to insert book. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+        console.info(`Succeeded in inserting book. rowId:${rowId}`);
       });
     });
   }
