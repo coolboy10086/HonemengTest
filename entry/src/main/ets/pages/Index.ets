@@ -79,6 +79,12 @@ struct Index {
             .onClick(() => {
               router.pushUrl({ url: 'pages/phone' })
             })
+        }
+        Row(){
+          Button('去BookDetail')
+            .onClick(() => {
+              router.pushUrl({ url: 'pages/BookDetail' })
+            })
           Button('获取数据库图书馆')
             .onClick(() => {
               this.getlib()
@@ -86,6 +92,7 @@ struct Index {
               console.log("BookData", this.BookData[0].imageUrl)
               console.log("BookData", this.BookData[0].imageUrl.imageUrl)
             })
+
         }
 
         Row() {
