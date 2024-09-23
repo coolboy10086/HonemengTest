@@ -154,7 +154,7 @@ export default class EntryAbility extends UIAbility {
     });
   }
   //存储书籍数据
-  public insertBook(NAME: string, AUTHOR: string, DESCRIPTION: string, IMAGEURL: string) {
+  public insertBook(TITTLE: string, AUTHOR: string, DESCRIPTION: string, IMAGEURL: string) {
     let STORE_CONFIG = {
       name: 'Library.db', // 数据库文件名
       securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
@@ -169,7 +169,7 @@ export default class EntryAbility extends UIAbility {
       // let predicates = new relationalStore.RdbPredicates('LIBRARY');
       //初始化数据
       const valuebook = {
-        "NAME": NAME,
+        "TITTLE": TITTLE,
         "AUTHOR": AUTHOR,
         "DESCRIPTION": DESCRIPTION,
         "IMAGEURL": IMAGEURL
@@ -183,10 +183,50 @@ export default class EntryAbility extends UIAbility {
       });
     });
   }
+  //取出书籍数据
+  public getBook(TITTLE: string) {
+    let STORE_CONFIG = {
+      name: 'Library.db', // 数据库文件名
+      securityLevel: relationalStore.SecurityLevel.S1 // 数据库安全级别
+    };
+    relationalStore.getRdbStore(context_create, STORE_CONFIG, (err, store) => {
+      if (err) {
+        console.error(`Failed to get RdbStore. Code:${err.code}, message:${err.message}`);
+        return;
+      }
+      console.info(`Succeeded in getting RdbStore.`);
+
+      let predicates = new relationalStore.RdbPredicates('BOOKS');
+
+      predicates.equalTo('TITTLE', TITTLE);
+      store.query(predicates, ['ID', 'TITTLE', 'AUTHOR', 'DESCRIPTION', 'IMAGEURL'], (err, resultSet) => {
+        if (err) {
+          console.error(`Failed to query data. Code:${err.code}, message:${err.message}`);
+          return;
+        }
+
+        // 遍历 ResultSet 的行数据
+        while (resultSet.goToNextRow()) {
+          const id = resultSet.getLong(0); // 第一列：ID
+          const tittle = resultSet.getString(1); // 第二列：NAME
+          const author = resultSet.getString(2); // 第三列：AGE
+          const description = resultSet.getString(3); // 第四列：SALARY
+          const imageUrl = resultSet.getString(4); // 第五列：CODES
+
+          // 打印出结果
+          console.info(`Row33: ID=${id}, TITTLE=${tittle}, AUTHOR=${author}, DESCRIPTION=${description}, IMAGEURL=${imageUrl}`);
+        }
+
+        // 关闭 ResultSet
+        resultSet.close();
+      });
+    });
+  }
 
   onCreate(want, launchParam) {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
     // 初始化 context
+    context_create = this.context;
     console.log('Context111:', this.context); // 打印 context 确保其初始化
   }
 

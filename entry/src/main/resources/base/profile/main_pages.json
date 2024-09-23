@@ -3,7 +3,6 @@
     "pages/Index",
     "pages/phone",
     "pages/MyWindows",
-    "pages/Test",
-    "pages/BookDetail"
+    "pages/Test"
   ]
 }

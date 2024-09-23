@@ -3,22 +3,23 @@ import Url from '@ohos.url'
 import router from '@ohos.router'
 import EntryAbility from '../entryability/EntryAbility'
 import util from '@ohos.util'
+import url from '@ohos.url'
 
 let httpRequest = http.createHttp()
 
 // 定义 Book 类
-class imageUrl {
-  imageUrl: Url.URLParams
-}
+// class imageUrl {
+//   imageUrl: Url.URLParams
+// }
 
 class Book {
   id: number
   title: string
   author: string
   description: string
-  imageUrl: imageUrl
+  imageUrl: string
 
-  constructor(id: number, title: string, author: string, description: string, imageUrl: imageUrl) {
+  constructor(id: number, title: string, author: string, description: string, imageUrl: string) {
     this.id = id
     this.title = title
     this.author = author
@@ -80,7 +81,8 @@ struct Index {
               router.pushUrl({ url: 'pages/phone' })
             })
         }
-        Row(){
+
+        Row() {
           Button('去BookDetail')
             .onClick(() => {
               router.pushUrl({ url: 'pages/BookDetail' })
@@ -90,7 +92,6 @@ struct Index {
               this.getlib()
               console.log("BookData", this.BookData[0].title)
               console.log("BookData", this.BookData[0].imageUrl)
-              console.log("BookData", this.BookData[0].imageUrl.imageUrl)
             })
 
         }
@@ -98,6 +99,12 @@ struct Index {
         Row() {
           Button('book').onClick(() => {
             this.getbook()
+          })
+          Button('storebook').onClick(() => {
+            this.storebook()
+          })
+          Button('getBook').onClick(() => {
+            this.enrtyAli.getBook('解忧杂货店')
           })
         }
 
@@ -135,6 +142,28 @@ struct Index {
     this.enrtyAli.getLibrary(this.libname)
   }
 
+  storebook() {
+    this.BookData.forEach((book) => {
+      let URL = JSON.stringify(book.imageUrl)
+      URL = URL.replace('"', '')
+      console.log("book111", book.title)
+      console.log("book111", book.author)
+      console.log("book111", book.description)
+      console.log("book111", URL)
+      try {
+        this.enrtyAli.insertBook(
+          book.title, // NAME
+          book.author, // AUTHOR
+          book.description, // DESCRIPTION
+          URL // IMAGEURL
+        )
+        console.info(`Inserted book: ${book.title}`);
+      } catch (error) {
+        console.error(`Failed to insert book: ${book.title}, error: ${error}`);
+      }
+    });
+  }
+
   getbook() {
     console.log("getbook", "getbook")
     try {
@@ -156,7 +185,7 @@ struct Index {
                 bookJson.title,
                 bookJson.author,
                 bookJson.description,
-                bookJson.imageUrl.imageUrl // 假设您的 JSON 格式中 imageUrl 字段是一个对象，且包含一个 imageUrl 属性
+                bookJson.imageUrl // 假设您的 JSON 格式中 imageUrl 字段是一个对象，且包含一个 imageUrl 属性
               ));
             } else {
               console.error('Parsed JSON is not an array');
