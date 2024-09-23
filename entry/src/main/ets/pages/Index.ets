@@ -90,8 +90,6 @@ struct Index {
           Button('获取数据库图书馆')
             .onClick(() => {
               this.getlib()
-              console.log("BookData", this.BookData[0].title)
-              console.log("BookData", this.BookData[0].imageUrl)
             })
 
         }
@@ -104,8 +102,27 @@ struct Index {
             this.storebook()
           })
           Button('getBook').onClick(() => {
-            this.enrtyAli.getBook('解忧杂货店')
+            this.enrtyAli.getBook('混沌塔')
           })
+        }
+
+        Row() {
+          Button('带params跳')
+            .onClick(() => {
+              console.log('params', this.BookData[0].title)
+              let params: Book = {
+                id: this.BookData[0].id,
+                title: this.BookData[0].title,
+                author: this.BookData[0].author,
+                description: this.BookData[0].description,
+                imageUrl: this.BookData[0].imageUrl
+              }
+
+              router.pushUrl({
+                url: "pages/BookDetail",
+                params: params })
+            })
+
         }
 
         Text(this.value)
